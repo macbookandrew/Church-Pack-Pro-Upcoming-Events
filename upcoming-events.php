@@ -41,9 +41,9 @@ function wpfc_display_upcoming_events_shortcode($atts) {
         }
     ?>
         <div class="calHead">
-            <h2 class="event-month"><?php if ( function_exists( wpfc_monthname ) ) { echo wpfc_monthname( $month , $year ); } ?></h2>
+            <h2 class="event-month"><?php echo wpfc_ue_monthname( $month , $year ); ?></h2>
         </div>
-        <div class="calentries"><?php if ( function_exists( wpfc_get_the_calendar() ) ) { echo wpfc_get_the_calendar( $month , $year ); } ?></div>
+        <div class="calentries"><?php echo wpfc_ue_get_the_calendar( $month , $year ); ?></div>
     <?php }
 ?>
 </div>
@@ -53,14 +53,53 @@ function wpfc_display_upcoming_events_shortcode($atts) {
 }
 // end shortcode
 
+// copy necessary functions
+function wpfc_ue_monthname($month,$year) {
+	global $post, $wp_locale;
+	if ($month) {
+		$output = date_i18n( 'F Y' , mktime(0, 0, 0, $month, 1, $year), false );
+	} else {
+		$output = date_i18n( 'F Y' , time(), false );
+	}
+	return $output;
+}
+
+function wpfc_ue_get_the_calendar($cmonth,$cyear) {
+	global $calentries;
+	$calentries = array();
+	$output = '';
+	wpfc_get_the_events($cmonth,$cyear);
+
+	if($calentries) {
+		$calentries = wpfc_subval_sort($calentries,'strdate');
+		foreach ($calentries as $cal_the_entry) {
+
+			$tmonth = date_i18n( 'D' , $cal_the_entry['strdate'] , false );
+			$caltime = get_post_meta($cal_the_entry['cids'], '_wpfc_timestartentry', true);
+			$output .= '<div class="calsingleentry"><div class="daydisplay"><span>' . $tmonth .   '</span><h1>'. date('d', $cal_the_entry['strdate']) . ' </h1></div>';
+			$output .= '<div class="shortcalentry"><a href="' . $cal_the_entry['clink'] . '">' . $cal_the_entry['ctitle'] .  '</a>';
+			$output .= '<span class="intdesc">';
+			if ($caltime){
+				$output .=  __('Time: ', 'church-pack') . '' . $caltime . '&nbsp;';
+			}
+			if ($caltime && $cal_the_entry['clocation']) {
+				$output .= '|&nbsp;';
+			}
+			if ($cal_the_entry['clocation']){
+				$output .= __('Location: ', 'church-pack') . '' . $cal_the_entry['clocation']  . ' ';
+			}
+			$output .= '</span></div></div>';
+		}
+		return $output;
+	} else {
+		return '<p>' . __('No events currently scheduled', 'church-pack') . '</p>';
+	}
+}
+// end necessary functions
+
 // add CSS styles
 function add_upcoming_styles() {
-    $custom_css = "
-    #church-pack .calentries {
-        margin-bottom: 60px;
-    }
-    ";
-    wp_add_inline_style( 'church-pack', $custom_css );
+    wp_enqueue_style( 'church-pack-upcoming-evetns', plugins_url( 'upcoming-events.css', __FILE__ ), 'church-pack' );
 }
 add_action( 'wp_enqueue_scripts', 'add_upcoming_styles' );
 // end add CSS styles
