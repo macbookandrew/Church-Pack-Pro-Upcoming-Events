@@ -3,7 +3,7 @@
  * Plugin Name: Church Pack Pro—Upcoming Events
  * Plugin URI: http://code.andrewrminion.com/
  * Description: A mini WordPress plugin based on Church Pack Pro that adds support for a year’s worth of events rather than just the current month.
- * Version: 1.0
+ * Version: 1.1
  * Author: Andrew Minion
  * Author URI: http://andrewrminion.com
  * Copyright 2014  AndrewRMinion Design  (email : andrew@andrewrminion.com)
