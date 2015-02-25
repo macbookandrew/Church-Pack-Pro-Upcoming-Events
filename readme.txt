@@ -28,4 +28,4 @@ A mini WordPress plugin based on [Church Pack Pro](https://www.wpforchurch.com/w
 * Adds some styling to help it look better
 
 = 1.0 =
-* First verison of the plugin
+* First version of the plugin
